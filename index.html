@@ -1494,7 +1494,8 @@ Instruções:
       document.getElementById('score-feedback').value = texto;
       toast('Feedback gerado pela IA! ✨ Revise antes de salvar.', 'success');
     } else {
-      toast('Não foi possível gerar o feedback. Tente novamente.', 'error');
+      const errMsg = data.error?.message || JSON.stringify(data);
+      toast('Erro IA: ' + errMsg.substring(0,80), 'error');
       console.error('Resposta IA:', data);
     }
   } catch(e) {
