@@ -808,10 +808,17 @@ async function boot(user) {
   setTimeout(async () => {
     try {
       if (p.role === 'teacher') { showView('teacher-dash'); await loadTeacherDash(); }
-      else { showView('dashboard'); await loadStudentDash(); }
+      else {
+        showView('dashboard');
+        // debug visual
+        const body = document.getElementById('dash-stats');
+        if (body) body.innerHTML = '<div style="padding:20px;color:red;font-size:13px">Carregando...</div>';
+        await loadStudentDash();
+      }
     } catch(e) {
-      console.error('Erro ao carregar dashboard:', e);
-      toast('Erro ao carregar. Recarregue a página.', 'error');
+      const body = document.getElementById('dash-stats');
+      if (body) body.innerHTML = '<div style="padding:20px;color:red;font-size:13px">ERRO: ' + e.message + '</div>';
+      toast('Erro: ' + e.message, 'error');
     }
   }, 300);
 }
