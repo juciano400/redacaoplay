@@ -632,6 +632,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 async function boot(user) {
   S.user = user;
   const { data: p } = await sb.from('profiles').select('*').eq('id', user.id).single();
+  if (!p) { toast('Perfil não encontrado. Contate o professor.', 'error'); await sb.auth.signOut(); showAuth(); return; }
   S.profile = p;
   document.getElementById('global-loader').classList.add('hidden');
   document.getElementById('auth-screen').classList.add('hidden');
@@ -639,8 +640,10 @@ async function boot(user) {
   document.getElementById('hdr-name').textContent = p.name || '';
   document.getElementById('hdr-avatar').textContent = (p.name||'?').charAt(0).toUpperCase();
   buildNav();
-  if (p.role === 'teacher') { showView('teacher-dash'); loadTeacherDash(); }
-  else { showView('dashboard'); loadStudentDash(); }
+  setTimeout(() => {
+    if (p.role === 'teacher') { showView('teacher-dash'); loadTeacherDash(); }
+    else { showView('dashboard'); loadStudentDash(); }
+  }, 50);
 }
 
 function showAuth() {
