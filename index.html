@@ -805,10 +805,15 @@ async function boot(user) {
   document.getElementById('hdr-name').textContent = p.name || '';
   document.getElementById('hdr-avatar').textContent = (p.name||'?').charAt(0).toUpperCase();
   buildNav();
-  setTimeout(() => {
-    if (p.role === 'teacher') { showView('teacher-dash'); loadTeacherDash(); }
-    else { showView('dashboard'); loadStudentDash(); }
-  }, 150);
+  setTimeout(async () => {
+    try {
+      if (p.role === 'teacher') { showView('teacher-dash'); await loadTeacherDash(); }
+      else { showView('dashboard'); await loadStudentDash(); }
+    } catch(e) {
+      console.error('Erro ao carregar dashboard:', e);
+      toast('Erro ao carregar. Recarregue a página.', 'error');
+    }
+  }, 300);
 }
 
 function showAuth() {
@@ -1388,14 +1393,15 @@ async function loadStudentDash() {
   const [
     { data: courses },
     { data: prog },
-    { data: subs },
-    { data: temas }
+    { data: subs }
   ] = await Promise.all([
     sb.from('courses').select('*, modules(id,lessons(id))').eq('published',true).order('order_index'),
     sb.from('lesson_progress').select('lesson_id').eq('user_id',S.user.id).eq('completed',true),
     sb.from('submissions').select('id,status').eq('user_id',S.user.id),
-    sb.from('temas').select('*').eq('visible',true).order('created_at',{ascending:false}).limit(1)
   ]);
+  // busca temas separada para não travar caso a tabela não exista ainda
+  let temas = null;
+  try { const r = await sb.from('temas').select('*').eq('visible',true).order('created_at',{ascending:false}).limit(1); temas = r.data; } catch(e) {}
 
   const doneIds = new Set((prog||[]).map(p=>p.lesson_id));
   let total=0, done=0;
