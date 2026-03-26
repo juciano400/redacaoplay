@@ -226,6 +226,37 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .score-display-total .t-val{font-family:'Fraunces',serif;font-size:40px;font-weight:800;line-height:1}
 .score-display-total .t-max{font-size:13px;opacity:.7}
 
+
+
+/* ── TEMAS ── */
+.tema-card{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;box-shadow:var(--sh2);transition:.25s;cursor:pointer}
+.tema-card:hover{transform:translateY(-2px);box-shadow:var(--sh);border-color:var(--violet)}
+.tema-cover{height:8px;background:linear-gradient(90deg,var(--violet),var(--vmid))}
+.tema-body{padding:18px 20px}
+.tema-title{font-family:'Fraunces',serif;font-size:17px;font-weight:700;margin-bottom:8px;line-height:1.3}
+.tema-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}
+.tema-prazo{font-size:12px;font-weight:600;display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:99px}
+.tema-prazo.ok{background:var(--gdim);color:var(--green)}
+.tema-prazo.urgente{background:var(--adim);color:var(--amber)}
+.tema-prazo.vencido{background:#FEF2F2;color:var(--danger)}
+.tema-prazo.sem-prazo{background:var(--surface2);color:var(--muted)}
+.tema-actions{display:flex;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.pdf-embed-wrap{border-radius:12px;overflow:hidden;border:1px solid var(--border);margin-bottom:12px}
+.pdf-embed-wrap iframe{width:100%;height:500px;border:none;display:block}
+@media(max-width:640px){.pdf-embed-wrap iframe{height:320px}}
+
+/* ── BOTTOM NAV MOBILE ── */
+#bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:#fff;border-top:1px solid var(--border);padding:8px 0 calc(8px + env(safe-area-inset-bottom));box-shadow:0 -4px 20px rgba(26,111,212,.08)}
+#bottom-nav .bnav-inner{display:flex;align-items:center;justify-content:space-around}
+#bottom-nav .bnav-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;border:none;background:none;cursor:pointer;font-family:inherit;transition:.2s;border-radius:10px;min-width:60px}
+#bottom-nav .bnav-btn .bnav-icon{font-size:22px;line-height:1}
+#bottom-nav .bnav-btn .bnav-label{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+#bottom-nav .bnav-btn.active .bnav-label{color:var(--violet)}
+#bottom-nav .bnav-btn.active .bnav-icon{transform:scale(1.15)}
+@media(max-width:640px){
+  #bottom-nav{display:block}
+  .app-body{padding-bottom:80px!important}
+}
 /* ── EMPTY ── */
 .empty{text-align:center;padding:60px 20px;color:var(--muted)}
 .empty-icon{font-size:48px;margin-bottom:12px;opacity:.5}
@@ -347,6 +378,33 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <div id="submissions-list"></div>
     </div>
 
+
+    <!-- STUDENT: Temas -->
+    <div class="view" id="view-temas">
+      <div class="page-hd fade-up">
+        <div class="page-title">Temas de Redação</div>
+        <div class="page-sub">Escolha um tema, leia os textos e envie sua redação</div>
+      </div>
+      <div id="temas-list-student"></div>
+    </div>
+
+    <!-- STUDENT: Ver tema específico -->
+    <div class="view" id="view-tema-detail">
+      <button class="back-btn" onclick="showView('temas');loadTemasStudent()">← Voltar aos temas</button>
+      <div id="tema-detail-body"></div>
+    </div>
+
+    <!-- TEACHER: Temas -->
+    <div class="view" id="view-temas-mgmt">
+      <div class="page-hd flex items-center justify-between fade-up">
+        <div>
+          <div class="page-title">Temas de Redação</div>
+          <div class="page-sub">Crie e gerencie os temas para seus alunos</div>
+        </div>
+        <button class="btn btn-v" onclick="openTemaModal()">+ Novo Tema</button>
+      </div>
+      <div id="temas-mgmt-list"></div>
+    </div>
     <!-- TEACHER: Dashboard -->
     <div class="view" id="view-teacher-dash">
       <div class="page-hd fade-up">
@@ -424,6 +482,70 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <div id="corrections-list"></div>
     </div>
 
+  </div>
+</div>
+
+
+<!-- Novo/Editar Tema -->
+<div class="overlay hidden" id="modal-tema">
+  <div class="modal" style="max-width:620px">
+    <div class="modal-hd">
+      <div class="modal-title" id="modal-tema-title">Novo Tema</div>
+      <button class="btn-x" onclick="closeModal('modal-tema')">✕</button>
+    </div>
+    <div class="field">
+      <label>Título do tema</label>
+      <input type="text" id="tema-input-title" placeholder="Ex: Desafios da educação no Brasil contemporâneo">
+    </div>
+    <div class="field">
+      <label>Textos motivadores — links do Google Drive (PDF)</label>
+      <div id="tema-pdfs-wrap">
+        <div class="flex gap-2 mb-2">
+          <input type="text" class="tema-pdf-input" placeholder="https://drive.google.com/file/d/ID/view" style="flex:1;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:inherit;font-size:13px;background:var(--bg);color:var(--ink);outline:none">
+        </div>
+      </div>
+      <button type="button" class="btn btn-ghost btn-sm mt-1" onclick="addPdfField()">+ Adicionar outro PDF</button>
+    </div>
+    <div class="field-row c2">
+      <div class="field">
+        <label>Prazo de envio (opcional)</label>
+        <input type="datetime-local" id="tema-input-prazo">
+      </div>
+      <div class="field">
+        <label>Visibilidade</label>
+        <select id="tema-input-visible">
+          <option value="true">✅ Visível para alunos</option>
+          <option value="false">🔒 Oculto</option>
+        </select>
+      </div>
+    </div>
+    <div class="flex gap-3 mt-4">
+      <button class="btn btn-outline flex-1" onclick="closeModal('modal-tema')">Cancelar</button>
+      <button class="btn btn-v flex-1" onclick="saveTema()" id="btn-save-tema">Salvar Tema</button>
+    </div>
+  </div>
+</div>
+
+<!-- Ver tema (aluno) - modal de envio -->
+<div class="overlay hidden" id="modal-send-tema">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title">✏️ Enviar Redação</div>
+      <button class="btn-x" onclick="closeModal('modal-send-tema')">✕</button>
+    </div>
+    <div class="field">
+      <label>Foto da redação</label>
+      <div class="upload-area" id="upload-area-tema">
+        <input type="file" id="sub-file-tema" accept="image/*" onchange="previewFileTema(this)">
+        <div id="upload-placeholder-tema">
+          <div style="font-size:32px;margin-bottom:8px">📷</div>
+          <div style="font-weight:600;font-size:14px">Clique ou arraste a foto aqui</div>
+          <div class="text-sm text-muted mt-1">JPG, PNG até 10MB</div>
+        </div>
+        <div id="upload-preview-wrap-tema" class="hidden upload-preview"></div>
+      </div>
+    </div>
+    <button class="btn btn-v w-full mt-3" onclick="submitRedacaoTema()" id="btn-sub-send-tema">Enviar Redação</button>
   </div>
 </div>
 
@@ -679,17 +801,40 @@ function buildNav() {
   document.getElementById('hdr-nav').innerHTML = isT
     ? `<button class="nav-btn" data-v="teacher-dash" onclick="showView('teacher-dash');loadTeacherDash()">Dashboard</button>
        <button class="nav-btn" data-v="courses-mgmt" onclick="showView('courses-mgmt');loadCoursesMgmt()">Cursos</button>
+       <button class="nav-btn" data-v="temas-mgmt" onclick="showView('temas-mgmt');loadTemasMgmt()">Temas</button>
        <button class="nav-btn" data-v="students" onclick="showView('students');loadStudents()">Alunos</button>
        <button class="nav-btn" data-v="corrections" onclick="showView('corrections');loadCorrections()">Correções</button>`
     : `<button class="nav-btn" data-v="dashboard" onclick="showView('dashboard');loadStudentDash()">Início</button>
+       <button class="nav-btn" data-v="temas" onclick="showView('temas');loadTemasStudent()">Temas</button>
        <button class="nav-btn" data-v="submissions" onclick="showView('submissions');loadSubmissions()">Minhas Redações</button>`;
+
+  // Bottom nav mobile
+  const bnavItems = isT ? [
+    { icon:'🏠', label:'Início',    v:'teacher-dash', fn:"showView('teacher-dash');loadTeacherDash()" },
+    { icon:'📚', label:'Cursos',    v:'courses-mgmt', fn:"showView('courses-mgmt');loadCoursesMgmt()" },
+    { icon:'📝', label:'Temas',     v:'temas-mgmt',   fn:"showView('temas-mgmt');loadTemasMgmt()" },
+    { icon:'👥', label:'Alunos',    v:'students',     fn:"showView('students');loadStudents()" },
+    { icon:'✏️', label:'Correções', v:'corrections',  fn:"showView('corrections');loadCorrections()" },
+  ] : [
+    { icon:'🏠', label:'Início',    v:'dashboard',   fn:"showView('dashboard');loadStudentDash()" },
+    { icon:'📝', label:'Temas',     v:'temas',       fn:"showView('temas');loadTemasStudent()" },
+    { icon:'✏️', label:'Redações',  v:'submissions', fn:"showView('submissions');loadSubmissions()" },
+  ];
+
+  document.getElementById('bnav-inner').innerHTML = bnavItems.map(item =>
+    `<button class="bnav-btn" data-v="${item.v}" onclick="${item.fn}">
+      <span class="bnav-icon">${item.icon}</span>
+      <span class="bnav-label">${item.label}</span>
+    </button>`
+  ).join('');
 }
 
 function showView(id) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-btn, .bnav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('view-'+id)?.classList.add('active');
-  document.querySelector(`.nav-btn[data-v="${id}"]`)?.classList.add('active');
+  document.querySelectorAll(`[data-v="${id}"]`).forEach(b => b.classList.add('active'));
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 
 function goHome() {
@@ -726,6 +871,262 @@ function scoreColor(v) {
   if (v >= 160) return 'var(--green)';
   if (v >= 100) return 'var(--amber)';
   return 'var(--rose)';
+}
+
+
+// ════════════════════════════════════════════════════════
+//  TEMAS
+// ════════════════════════════════════════════════════════
+
+let S_tema = { editingTemaId: null, currentTema: null };
+
+// ── helpers de prazo ──────────────────────────────────────
+function prazoStatus(prazo) {
+  if (!prazo) return { label: 'Sem prazo', cls: 'sem-prazo', bloqueado: false };
+  const diff = new Date(prazo) - new Date();
+  const dias = Math.ceil(diff / 86400000);
+  if (diff < 0) return { label: 'Prazo encerrado', cls: 'vencido', bloqueado: true };
+  if (dias <= 2) return { label: `Encerra em ${dias}d`, cls: 'urgente', bloqueado: false };
+  return { label: `Prazo: ${new Date(prazo).toLocaleDateString('pt-BR')}`, cls: 'ok', bloqueado: false };
+}
+
+function extractDriveIdTema(url) {
+  const m = url.match(/\/d\/([^/?]+)/);
+  return m ? m[1] : url;
+}
+
+// ── PROFESSOR: listar temas ───────────────────────────────
+async function loadTemasMgmt() {
+  const { data: temas } = await sb.from('temas').select('*').order('created_at', { ascending: false });
+  const el = document.getElementById('temas-mgmt-list');
+  if (!temas?.length) { el.innerHTML = emptyState('📝', 'Nenhum tema criado', 'Crie o primeiro tema clicando em "+ Novo Tema".'); return; }
+
+  el.innerHTML = '<div class="courses-grid">' + temas.map(t => {
+    const p = prazoStatus(t.prazo);
+    const pdfs = t.pdfs || [];
+    return `<div class="tema-card">
+      <div class="tema-cover"></div>
+      <div class="tema-body">
+        <div class="tema-title">${esc(t.title)}</div>
+        <div class="tema-meta">
+          <span class="tema-prazo ${p.cls}">⏰ ${p.label}</span>
+          ${t.visible ? '<span class="badge bg_">✅ Visível</span>' : '<span class="badge ba">🔒 Oculto</span>'}
+          <span class="badge bv">📄 ${pdfs.length} texto${pdfs.length !== 1 ? 's' : ''}</span>
+        </div>
+        <div class="tema-actions">
+          <button class="btn btn-v btn-sm" style="flex:1" onclick="editTema('${t.id}')">✏️ Editar</button>
+          <button class="btn btn-ghost btn-sm btn-icon" onclick="toggleTemaVisibility('${t.id}', ${t.visible})">${t.visible ? '🔒' : '👁️'}</button>
+          <button class="btn btn-danger btn-sm btn-icon" onclick="deleteTema('${t.id}')">🗑</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('') + '</div>';
+}
+
+// ── PROFESSOR: abrir modal novo/editar ────────────────────
+function openTemaModal() {
+  S_tema.editingTemaId = null;
+  document.getElementById('modal-tema-title').textContent = 'Novo Tema';
+  document.getElementById('tema-input-title').value = '';
+  document.getElementById('tema-input-prazo').value = '';
+  document.getElementById('tema-input-visible').value = 'true';
+  document.getElementById('tema-pdfs-wrap').innerHTML = `
+    <div class="flex gap-2 mb-2">
+      <input type="text" class="tema-pdf-input" placeholder="https://drive.google.com/file/d/ID/view"
+        style="flex:1;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:inherit;font-size:13px;background:var(--bg);color:var(--ink);outline:none">
+    </div>`;
+  openModal('modal-tema');
+}
+
+function addPdfField() {
+  const wrap = document.getElementById('tema-pdfs-wrap');
+  const div = document.createElement('div');
+  div.className = 'flex gap-2 mb-2';
+  div.innerHTML = `<input type="text" class="tema-pdf-input" placeholder="https://drive.google.com/file/d/ID/view"
+    style="flex:1;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:inherit;font-size:13px;background:var(--bg);color:var(--ink);outline:none">
+    <button type="button" class="btn btn-danger btn-sm btn-icon" onclick="this.parentElement.remove()">✕</button>`;
+  wrap.appendChild(div);
+}
+
+async function editTema(id) {
+  const { data: t } = await sb.from('temas').select('*').eq('id', id).single();
+  S_tema.editingTemaId = id;
+  document.getElementById('modal-tema-title').textContent = 'Editar Tema';
+  document.getElementById('tema-input-title').value = t.title;
+  document.getElementById('tema-input-visible').value = String(t.visible);
+  if (t.prazo) {
+    const d = new Date(t.prazo);
+    document.getElementById('tema-input-prazo').value = d.toISOString().slice(0,16);
+  } else {
+    document.getElementById('tema-input-prazo').value = '';
+  }
+  const pdfs = t.pdfs || [''];
+  document.getElementById('tema-pdfs-wrap').innerHTML = pdfs.map((url, i) => `
+    <div class="flex gap-2 mb-2">
+      <input type="text" class="tema-pdf-input" value="${esc(url)}" placeholder="https://drive.google.com/file/d/ID/view"
+        style="flex:1;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:inherit;font-size:13px;background:var(--bg);color:var(--ink);outline:none">
+      ${i > 0 ? `<button type="button" class="btn btn-danger btn-sm btn-icon" onclick="this.parentElement.remove()">✕</button>` : ''}
+    </div>`).join('');
+  openModal('modal-tema');
+}
+
+async function saveTema() {
+  const title = document.getElementById('tema-input-title').value.trim();
+  if (!title) { toast('Digite o título do tema.', 'error'); return; }
+  const pdfs = [...document.querySelectorAll('.tema-pdf-input')]
+    .map(i => i.value.trim()).filter(Boolean);
+  const prazoVal = document.getElementById('tema-input-prazo').value;
+  const visible = document.getElementById('tema-input-visible').value === 'true';
+  const payload = { title, pdfs, visible, prazo: prazoVal ? new Date(prazoVal).toISOString() : null };
+  const btn = document.getElementById('btn-save-tema');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>';
+  if (S_tema.editingTemaId) {
+    await sb.from('temas').update(payload).eq('id', S_tema.editingTemaId);
+  } else {
+    await sb.from('temas').insert({ ...payload, created_by: S.user.id });
+  }
+  btn.disabled = false; btn.innerHTML = 'Salvar Tema';
+  closeModal('modal-tema'); toast('Tema salvo!', 'success'); loadTemasMgmt();
+}
+
+async function toggleTemaVisibility(id, current) {
+  await sb.from('temas').update({ visible: !current }).eq('id', id);
+  toast(!current ? 'Tema visível para alunos! ✅' : 'Tema ocultado.', 'success');
+  loadTemasMgmt();
+}
+
+async function deleteTema(id) {
+  if (!confirm('Apagar este tema?')) return;
+  await sb.from('temas').delete().eq('id', id);
+  toast('Tema apagado.'); loadTemasMgmt();
+}
+
+// ── ALUNO: listar temas ───────────────────────────────────
+async function loadTemasStudent() {
+  const { data: temas } = await sb.from('temas').select('*').eq('visible', true).order('created_at', { ascending: false });
+  const el = document.getElementById('temas-list-student');
+  if (!temas?.length) { el.innerHTML = emptyState('📝', 'Nenhum tema disponível', 'Aguarde seu professor publicar um tema.'); return; }
+
+  el.innerHTML = '<div class="courses-grid">' + temas.map(t => {
+    const p = prazoStatus(t.prazo);
+    const pdfs = t.pdfs || [];
+    return `<div class="tema-card" onclick="openTemaStudent('${t.id}')">
+      <div class="tema-cover"></div>
+      <div class="tema-body">
+        <div class="tema-title">${esc(t.title)}</div>
+        <div class="tema-meta">
+          <span class="tema-prazo ${p.cls}">⏰ ${p.label}</span>
+          <span class="badge bv">📄 ${pdfs.length} texto${pdfs.length !== 1 ? 's' : ''}</span>
+          ${p.bloqueado ? '<span class="badge bd">🔒 Encerrado</span>' : '<span class="badge bg_">✅ Aberto</span>'}
+        </div>
+      </div>
+    </div>`;
+  }).join('') + '</div>';
+}
+
+// ── ALUNO: ver tema detalhado ─────────────────────────────
+async function openTemaStudent(id) {
+  const { data: t } = await sb.from('temas').select('*').eq('id', id).single();
+  S_tema.currentTema = t;
+  showView('tema-detail');
+  const p = prazoStatus(t.prazo);
+  const pdfs = (t.pdfs || []).filter(Boolean);
+
+  document.getElementById('tema-detail-body').innerHTML = `
+    <div class="page-hd">
+      <div class="page-title">${esc(t.title)}</div>
+      <div class="tema-meta mt-2">
+        <span class="tema-prazo ${p.cls}">⏰ ${p.label}</span>
+        ${p.bloqueado ? '<span class="badge bd">🔒 Prazo encerrado</span>' : '<span class="badge bg_">✅ Envio aberto</span>'}
+      </div>
+    </div>
+
+    ${pdfs.length ? `
+      <div class="section-title mt-4">📄 Textos Motivadores</div>
+      <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px">
+        ${pdfs.map((url, i) => {
+          const driveId = extractDriveIdTema(url);
+          return `<div>
+            <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Texto ${i+1}</div>
+            <div class="pdf-embed-wrap">
+              <iframe src="https://drive.google.com/file/d/${driveId}/preview" allowfullscreen></iframe>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>` : ''}
+
+    ${!p.bloqueado ? `
+      <div style="background:linear-gradient(135deg,var(--violet),var(--vmid));border-radius:16px;padding:24px;text-align:center;color:#fff">
+        <div style="font-size:28px;margin-bottom:8px">✏️</div>
+        <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;margin-bottom:6px">Pronto para escrever?</div>
+        <div style="font-size:14px;opacity:.85;margin-bottom:16px">Leia os textos acima, escreva sua redação e envie a foto aqui.</div>
+        <button class="btn" style="background:#fff;color:var(--violet);font-weight:700;padding:12px 28px" onclick="openSendTemaModal('${t.id}','${esc(t.title)}')">
+          📷 Enviar Minha Redação
+        </button>
+      </div>` : `
+      <div style="background:#FEF2F2;border-radius:16px;padding:24px;text-align:center;border:1px solid #FECACA">
+        <div style="font-size:28px;margin-bottom:8px">🔒</div>
+        <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--danger);margin-bottom:6px">Prazo Encerrado</div>
+        <div style="font-size:14px;color:#7F1D1D">O prazo para envio deste tema foi encerrado.</div>
+      </div>`}
+  `;
+}
+
+function openSendTemaModal(temaId, temaTitulo) {
+  S_tema.currentTemaId = temaId;
+  S_tema.currentTemaTitulo = temaTitulo;
+  document.getElementById('sub-file-tema').value = '';
+  document.getElementById('upload-preview-wrap-tema').classList.add('hidden');
+  document.getElementById('upload-preview-wrap-tema').innerHTML = '';
+  document.getElementById('upload-placeholder-tema').classList.remove('hidden');
+  openModal('modal-send-tema');
+}
+
+function previewFileTema(input) {
+  const file = input.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = e => {
+    const w = document.getElementById('upload-preview-wrap-tema');
+    w.innerHTML = `<img src="${e.target.result}" alt="">`;
+    w.classList.remove('hidden');
+    document.getElementById('upload-placeholder-tema').classList.add('hidden');
+  };
+  r.readAsDataURL(file);
+}
+
+async function submitRedacaoTema() {
+  const file = document.getElementById('sub-file-tema').files[0];
+  if (!file) { toast('Selecione uma foto da redação.', 'error'); return; }
+  const btn = document.getElementById('btn-sub-send-tema');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Enviando...';
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', 'redacaoplay');
+  formData.append('folder', `redacoes/${S.user.id}`);
+
+  try {
+    const res = await fetch('https://api.cloudinary.com/v1_1/dxn2gs6le/image/upload', { method: 'POST', body: formData });
+    const data = await res.json();
+    if (!res.ok || data.error) { toast('Erro no upload: '+(data.error?.message||'tente novamente'), 'error'); btn.disabled=false; btn.innerHTML='Enviar Redação'; return; }
+
+    const { error } = await sb.from('submissions').insert({
+      user_id: S.user.id,
+      title: S_tema.currentTemaTitulo,
+      tema_id: S_tema.currentTemaId,
+      image_url: data.secure_url,
+      status: 'pending'
+    });
+    if (error) { toast('Erro ao salvar: '+error.message, 'error'); btn.disabled=false; btn.innerHTML='Enviar Redação'; return; }
+
+    toast('Redação enviada! 🎉', 'success');
+    closeModal('modal-send-tema');
+    btn.disabled = false; btn.innerHTML = 'Enviar Redação';
+    showView('temas'); loadTemasStudent();
+  } catch(e) {
+    toast('Erro: '+e.message, 'error');
+    btn.disabled = false; btn.innerHTML = 'Enviar Redação';
+  }
 }
 
 // ════════════════════════════════════════════════════════
