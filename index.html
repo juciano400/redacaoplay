@@ -1416,6 +1416,7 @@ async function gerarFeedbackIA(subId) {
   const status = document.getElementById('ia-status');
   btn.disabled = true; btn.innerHTML = '⏳ Gerando...';
   status.style.display = 'block';
+  status.textContent = '⏳ Lendo a redação e gerando feedback...';
 
   const nivelDesc = (pts) => {
     if(pts===0) return 'nível 0 — ausência total de domínio';
@@ -1427,16 +1428,64 @@ async function gerarFeedbackIA(subId) {
     return pts+' pontos';
   };
 
-  const prompt = `Você é um professor especialista em redação ENEM. Gere um feedback individualizado, didático e encorajador para um aluno com as seguintes notas:\n\nC1 — Domínio da Norma Culta: ${c1}/200 (${nivelDesc(c1)})\nC2 — Compreensão da Proposta e Repertório: ${c2}/200 (${nivelDesc(c2)})\nC3 — Seleção e Organização das Informações: ${c3}/200 (${nivelDesc(c3)})\nC4 — Mecanismos de Coesão: ${c4}/200 (${nivelDesc(c4)})\nC5 — Proposta de Intervenção: ${c5}/200 (${nivelDesc(c5)})\nTOTAL: ${total}/1000\n\nInstruções:\n- Comece com uma frase de reconhecimento do esforço do aluno\n- Para cada competência com pontuação abaixo de 160, explique especificamente o que faltou e dê dicas concretas de como melhorar\n- Para competências com 160 ou 200, elogie e reforce o ponto forte\n- Termine com uma mensagem motivadora e um conselho prático para a próxima redação\n- Use linguagem acessível, direta e empática\n- Escreva em português brasileiro, sem markdown, em parágrafos corridos\n- Máximo 250 palavras`;
+  // Tenta pegar a URL da imagem da redação
+  const imgEl = document.querySelector('#correct-body img');
+  const imageUrl = imgEl ? imgEl.src : null;
+
+  const textPrompt = `Você é um professor especialista em redação ENEM. Analise a redação do aluno na imagem (se disponível) e gere um feedback individualizado, didático e encorajador com base nas notas abaixo.
+
+Notas atribuídas:
+C1 — Domínio da Norma Culta: ${c1}/200 (${nivelDesc(c1)})
+C2 — Compreensão da Proposta e Repertório: ${c2}/200 (${nivelDesc(c2)})
+C3 — Seleção e Organização das Informações: ${c3}/200 (${nivelDesc(c3)})
+C4 — Mecanismos de Coesão: ${c4}/200 (${nivelDesc(c4)})
+C5 — Proposta de Intervenção: ${c5}/200 (${nivelDesc(c5)})
+TOTAL: ${total}/1000
+
+Instruções:
+- Se conseguir ler a redação na imagem, cite trechos reais do aluno para embasar o feedback
+- Comece reconhecendo o esforço do aluno
+- Para cada competência abaixo de 160, explique o que faltou com dicas concretas e práticas
+- Para competências com 160 ou 200, elogie e reforce o ponto forte
+- Termine com mensagem motivadora e conselho prático para a próxima redação
+- Linguagem acessível, direta e empática
+- Português brasileiro, sem markdown, em parágrafos corridos
+- Máximo 300 palavras`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    // Monta o conteúdo — com imagem se disponível
+    let messageContent;
+    if (imageUrl) {
+      // Converte imagem para base64
+      try {
+        const imgRes = await fetch(imageUrl);
+        const blob = await imgRes.blob();
+        const base64 = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result.split(',')[1]);
+          reader.readAsDataURL(blob);
+        });
+        const mimeType = blob.type || 'image/jpeg';
+        messageContent = [
+          { type: 'image', source: { type: 'base64', media_type: mimeType, data: base64 } },
+          { type: 'text', text: textPrompt }
+        ];
+        status.textContent = '🔍 Lendo o texto da redação...';
+      } catch(e) {
+        // Se falhar ao carregar imagem, usa só o texto
+        messageContent = textPrompt;
+      }
+    } else {
+      messageContent = textPrompt;
+    }
+
+    const res = await fetch('https://winter-forest-cdfc.juciano400.workers.dev/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
+        max_tokens: 1200,
+        messages: [{ role: 'user', content: messageContent }]
       })
     });
     const data = await res.json();
@@ -1446,6 +1495,7 @@ async function gerarFeedbackIA(subId) {
       toast('Feedback gerado pela IA! ✨ Revise antes de salvar.', 'success');
     } else {
       toast('Não foi possível gerar o feedback. Tente novamente.', 'error');
+      console.error('Resposta IA:', data);
     }
   } catch(e) {
     toast('Erro de conexão com a IA: '+e.message, 'error');
