@@ -6,6 +6,7 @@
 <title>Redação Play</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
 :root {
   --ink: #0F1B2D; --ink2: #1A3A5C; --bg: #F0F6FF; --surface: #FFFFFF;
@@ -228,6 +229,11 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
 
 
+
+/* ── LUCIDE ICONS ── */
+.ic{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.ic svg{stroke-width:1.8px}
+
 /* ── TEMAS ── */
 .tema-card{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;box-shadow:var(--sh2);transition:.25s;cursor:pointer}
 .tema-card:hover{transform:translateY(-2px);box-shadow:var(--sh);border-color:var(--violet)}
@@ -317,7 +323,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     <div class="hdr-right">
       <div class="hdr-avatar" id="hdr-avatar">?</div>
       <span class="hdr-name" id="hdr-name"></span>
-      <button class="btn-logout" onclick="doLogout()">Sair</button>
+      <button class="btn-logout" onclick="doLogout()"><i data-lucide="log-out" style="width:14px;height:14px"></i> Sair</button>
     </div>
   </header>
 
@@ -336,7 +342,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
     <!-- STUDENT: Curso (módulos + player) -->
     <div class="view" id="view-course">
-      <button class="back-btn" onclick="showView('dashboard');loadStudentDash()">← Voltar aos cursos</button>
+      <button class="back-btn" onclick="showView('dashboard');loadStudentDash()"><i data-lucide="arrow-left" style="width:15px;height:15px"></i> Voltar aos cursos</button>
       <div class="course-layout">
         <div>
           <div class="page-hd">
@@ -347,12 +353,12 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
             <div class="player-wrap">
               <div class="player-header">
                 <div class="player-title" id="player-lesson-title"></div>
-                <button class="btn btn-green btn-sm" id="btn-mark-done" onclick="markLessonDone()">✓ Marcar como concluída</button>
+                <button class="btn btn-green btn-sm" id="btn-mark-done" onclick="markLessonDone()"><i data-lucide="check" style="width:14px;height:14px"></i> Marcar como concluída</button>
               </div>
               <div class="embed-area" id="embed-area"></div>
               <div class="player-footer">
-                <button class="btn btn-ghost btn-sm" onclick="navLesson(-1)">← Anterior</button>
-                <button class="btn btn-v btn-sm" onclick="navLesson(1)">Próxima →</button>
+                <button class="btn btn-ghost btn-sm" onclick="navLesson(-1)"><i data-lucide="chevron-left" style="width:15px;height:15px"></i> Anterior</button>
+                <button class="btn btn-v btn-sm" onclick="navLesson(1)">Próxima <i data-lucide="chevron-right" style="width:15px;height:15px"></i></button>
               </div>
             </div>
           </div>
@@ -373,7 +379,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <div class="page-title">Minhas Redações</div>
           <div class="page-sub">Envie e acompanhe suas correções</div>
         </div>
-        <button class="btn btn-v" onclick="openSendModal()">+ Enviar Redação</button>
+        <button class="btn btn-v" onclick="openSendModal()"><i data-lucide="upload" style="width:16px;height:16px"></i> Enviar Redação</button>
       </div>
       <div id="submissions-list"></div>
     </div>
@@ -390,7 +396,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
     <!-- STUDENT: Ver tema específico -->
     <div class="view" id="view-tema-detail">
-      <button class="back-btn" onclick="showView('temas');loadTemasStudent()">← Voltar aos temas</button>
+      <button class="back-btn" onclick="showView('temas');loadTemasStudent()"><i data-lucide="arrow-left" style="width:15px;height:15px"></i> Voltar aos temas</button>
       <div id="tema-detail-body"></div>
     </div>
 
@@ -401,7 +407,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <div class="page-title">Temas de Redação</div>
           <div class="page-sub">Crie e gerencie os temas para seus alunos</div>
         </div>
-        <button class="btn btn-v" onclick="openTemaModal()">+ Novo Tema</button>
+        <button class="btn btn-v" onclick="openTemaModal()"><i data-lucide="plus" style="width:16px;height:16px"></i> Novo Tema</button>
       </div>
       <div id="temas-mgmt-list"></div>
     </div>
@@ -435,22 +441,22 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <div class="page-title">Cursos</div>
           <div class="page-sub">Crie e organize seus cursos</div>
         </div>
-        <button class="btn btn-v" onclick="openCourseModal()">+ Novo Curso</button>
+        <button class="btn btn-v" onclick="openCourseModal()"><i data-lucide="plus" style="width:16px;height:16px"></i> Novo Curso</button>
       </div>
       <div id="courses-mgmt-list"></div>
     </div>
 
     <!-- TEACHER: Módulos de um curso -->
     <div class="view" id="view-modules-mgmt">
-      <button class="back-btn" onclick="showView('courses-mgmt');loadCoursesMgmt()">← Voltar aos cursos</button>
+      <button class="back-btn" onclick="showView('courses-mgmt');loadCoursesMgmt()"><i data-lucide="arrow-left" style="width:15px;height:15px"></i> Voltar aos cursos</button>
       <div class="page-hd flex items-center justify-between">
         <div>
           <div class="page-title" id="modules-course-title"></div>
           <div class="page-sub">Módulos e aulas</div>
         </div>
         <div class="flex gap-3">
-          <button class="btn btn-outline btn-sm" onclick="toggleCoursePublish()">🌐 <span id="btn-publish-label">Publicar</span></button>
-          <button class="btn btn-v btn-sm" onclick="openModuleModal()">+ Módulo</button>
+          <button class="btn btn-outline btn-sm" onclick="toggleCoursePublish()"><i data-lucide="globe" style="width:14px;height:14px"></i> <span id="btn-publish-label">Publicar</span></button>
+          <button class="btn btn-v btn-sm" onclick="openModuleModal()"><i data-lucide="plus" style="width:16px;height:16px"></i> Módulo</button>
         </div>
       </div>
       <div id="modules-mgmt-list"></div>
@@ -463,7 +469,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <div class="page-title">Alunos</div>
           <div class="page-sub">Gerencie os alunos cadastrados</div>
         </div>
-        <button class="btn btn-v" onclick="openInviteModal()">+ Cadastrar Aluno</button>
+        <button class="btn btn-v" onclick="openInviteModal()"><i data-lucide="user-plus" style="width:16px;height:16px"></i> Cadastrar Aluno</button>
       </div>
       <div id="students-list"></div>
     </div>
@@ -530,7 +536,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 <div class="overlay hidden" id="modal-send-tema">
   <div class="modal">
     <div class="modal-hd">
-      <div class="modal-title">✏️ Enviar Redação</div>
+      <div class="modal-title"><i data-lucide="pen-line" style="width:18px;height:18px"></i> Enviar Redação</div>
       <button class="btn-x" onclick="closeModal('modal-send-tema')">✕</button>
     </div>
     <div class="field">
@@ -555,7 +561,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 <div class="overlay hidden" id="modal-send">
   <div class="modal">
     <div class="modal-hd">
-      <div class="modal-title">✏️ Enviar Redação</div>
+      <div class="modal-title"><i data-lucide="pen-line" style="width:18px;height:18px"></i> Enviar Redação</div>
       <button class="btn-x" onclick="closeModal('modal-send')">✕</button>
     </div>
     <div class="field">
@@ -593,7 +599,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 <div class="overlay hidden" id="modal-correct">
   <div class="modal" style="max-width:960px">
     <div class="modal-hd">
-      <div class="modal-title">Corrigir Redação</div>
+      <div class="modal-title"><i data-lucide="check-square" style="width:18px;height:18px"></i> Corrigir Redação</div>
       <button class="btn-x" onclick="closeModal('modal-correct')">✕</button>
     </div>
     <div id="correct-body"></div>
@@ -762,6 +768,7 @@ async function boot(user) {
   document.getElementById('hdr-name').textContent = p.name || '';
   document.getElementById('hdr-avatar').textContent = (p.name||'?').charAt(0).toUpperCase();
   buildNav();
+  if(window.lucide) setTimeout(()=>lucide.createIcons(),10);
   setTimeout(() => {
     if (p.role === 'teacher') { showView('teacher-dash'); loadTeacherDash(); }
     else { showView('dashboard'); loadStudentDash(); }
@@ -810,23 +817,24 @@ function buildNav() {
 
   // Bottom nav mobile
   const bnavItems = isT ? [
-    { icon:'🏠', label:'Início',    v:'teacher-dash', fn:"showView('teacher-dash');loadTeacherDash()" },
-    { icon:'📚', label:'Cursos',    v:'courses-mgmt', fn:"showView('courses-mgmt');loadCoursesMgmt()" },
-    { icon:'📝', label:'Temas',     v:'temas-mgmt',   fn:"showView('temas-mgmt');loadTemasMgmt()" },
-    { icon:'👥', label:'Alunos',    v:'students',     fn:"showView('students');loadStudents()" },
-    { icon:'✏️', label:'Correções', v:'corrections',  fn:"showView('corrections');loadCorrections()" },
+    { icon:'home', label:'Início',    v:'teacher-dash', fn:"showView('teacher-dash');loadTeacherDash()" },
+    { icon:'book-open', label:'Cursos',    v:'courses-mgmt', fn:"showView('courses-mgmt');loadCoursesMgmt()" },
+    { icon:'file-text', label:'Temas',     v:'temas-mgmt',   fn:"showView('temas-mgmt');loadTemasMgmt()" },
+    { icon:'users', label:'Alunos',    v:'students',     fn:"showView('students');loadStudents()" },
+    { icon:'pen-line', label:'Correções', v:'corrections',  fn:"showView('corrections');loadCorrections()" },
   ] : [
-    { icon:'🏠', label:'Início',    v:'dashboard',   fn:"showView('dashboard');loadStudentDash()" },
-    { icon:'📝', label:'Temas',     v:'temas',       fn:"showView('temas');loadTemasStudent()" },
-    { icon:'✏️', label:'Redações',  v:'submissions', fn:"showView('submissions');loadSubmissions()" },
+    { icon:'home', label:'Início',    v:'dashboard',   fn:"showView('dashboard');loadStudentDash()" },
+    { icon:'file-text', label:'Temas',     v:'temas',       fn:"showView('temas');loadTemasStudent()" },
+    { icon:'pen-line', label:'Redações',  v:'submissions', fn:"showView('submissions');loadSubmissions()" },
   ];
 
   document.getElementById('bnav-inner').innerHTML = bnavItems.map(item =>
     `<button class="bnav-btn" data-v="${item.v}" onclick="${item.fn}">
-      <span class="bnav-icon">${item.icon}</span>
+      <span class="bnav-icon"><i data-lucide="${item.icon}" style="width:22px;height:22px"></i></span>
       <span class="bnav-label">${item.label}</span>
     </button>`
   ).join('');
+  if(window.lucide) lucide.createIcons();
 }
 
 function showView(id) {
@@ -914,7 +922,7 @@ async function loadTemasMgmt() {
           <span class="badge bv">📄 ${pdfs.length} texto${pdfs.length !== 1 ? 's' : ''}</span>
         </div>
         <div class="tema-actions">
-          <button class="btn btn-v btn-sm" style="flex:1" onclick="editTema('${t.id}')">✏️ Editar</button>
+          <button class="btn btn-v btn-sm" style="flex:1" onclick="editTema('${t.id}')"><i data-lucide="pencil" style="width:14px;height:14px"></i> Editar</button>
           <button class="btn btn-ghost btn-sm btn-icon" onclick="toggleTemaVisibility('${t.id}', ${t.visible})">${t.visible ? '🔒' : '👁️'}</button>
           <button class="btn btn-danger btn-sm btn-icon" onclick="deleteTema('${t.id}')">🗑</button>
         </div>
@@ -1147,10 +1155,10 @@ async function loadStudentDash() {
   const corrected = (subs||[]).filter(s=>s.status==='corrected').length;
 
   document.getElementById('dash-stats').innerHTML = `
-    <div class="stat-card fade-up"><div class="stat-icon" style="background:var(--vdim)">📚</div><div><div class="stat-val">${(courses||[]).length}</div><div class="stat-label">Cursos</div></div></div>
-    <div class="stat-card fade-up-2"><div class="stat-icon" style="background:var(--gdim)">✅</div><div><div class="stat-val">${done}</div><div class="stat-label">Aulas concluídas</div></div></div>
-    <div class="stat-card fade-up-3"><div class="stat-icon" style="background:var(--tdim)">✏️</div><div><div class="stat-val">${(subs||[]).length}</div><div class="stat-label">Redações enviadas</div></div></div>
-    <div class="stat-card fade-up-4"><div class="stat-icon" style="background:var(--adim)">⭐</div><div><div class="stat-val">${corrected}</div><div class="stat-label">Correções recebidas</div></div></div>`;
+    <div class="stat-card fade-up"><div class="stat-icon" style="background:var(--vdim)"><i data-lucide="book-open" style="width:22px;height:22px;color:var(--violet)"></i></div><div><div class="stat-val">${(courses||[]).length}</div><div class="stat-label">Cursos</div></div></div>
+    <div class="stat-card fade-up-2"><div class="stat-icon" style="background:var(--gdim)"><i data-lucide="check-circle" style="width:22px;height:22px;color:var(--green)"></i></div><div><div class="stat-val">${done}</div><div class="stat-label">Aulas concluídas</div></div></div>
+    <div class="stat-card fade-up-3"><div class="stat-icon" style="background:var(--tdim)"><i data-lucide="pen-line" style="width:22px;height:22px;color:var(--teal)"></i></div><div><div class="stat-val">${(subs||[]).length}</div><div class="stat-label">Redações enviadas</div></div></div>
+    <div class="stat-card fade-up-4"><div class="stat-icon" style="background:var(--adim)"><i data-lucide="star" style="width:22px;height:22px;color:var(--amber)"></i></div><div><div class="stat-val">${corrected}</div><div class="stat-label">Correções recebidas</div></div></div>`;
 
   const grid = document.getElementById('dash-courses');
   if (!courses?.length) { grid.innerHTML = emptyState('📚','Nenhum curso disponível','Aguarde a publicação de novos cursos.'); return; }
@@ -1384,10 +1392,10 @@ async function loadTeacherDash() {
     sb.from('submissions').select('*',{count:'exact',head:true}),
   ]);
   document.getElementById('teacher-stats').innerHTML=`
-    <div class="stat-card fade-up"><div class="stat-icon" style="background:var(--vdim)">📚</div><div><div class="stat-val">${nC||0}</div><div class="stat-label">Cursos</div></div></div>
-    <div class="stat-card fade-up-2"><div class="stat-icon" style="background:var(--tdim)">👥</div><div><div class="stat-val">${nS||0}</div><div class="stat-label">Alunos</div></div></div>
-    <div class="stat-card fade-up-3"><div class="stat-icon" style="background:var(--adim)">⏳</div><div><div class="stat-val">${nP||0}</div><div class="stat-label">Pendentes</div></div></div>
-    <div class="stat-card fade-up-4"><div class="stat-icon" style="background:var(--gdim)">✏️</div><div><div class="stat-val">${nT||0}</div><div class="stat-label">Total redações</div></div></div>`;
+    <div class="stat-card fade-up"><div class="stat-icon" style="background:var(--vdim)"><i data-lucide="book-open" style="width:22px;height:22px;color:var(--violet)"></i></div><div><div class="stat-val">${nC||0}</div><div class="stat-label">Cursos</div></div></div>
+    <div class="stat-card fade-up-2"><div class="stat-icon" style="background:var(--tdim)"><i data-lucide="users" style="width:22px;height:22px;color:var(--teal)"></i></div><div><div class="stat-val">${nS||0}</div><div class="stat-label">Alunos</div></div></div>
+    <div class="stat-card fade-up-3"><div class="stat-icon" style="background:var(--adim)"><i data-lucide="clock" style="width:22px;height:22px;color:var(--amber)"></i></div><div><div class="stat-val">${nP||0}</div><div class="stat-label">Pendentes</div></div></div>
+    <div class="stat-card fade-up-4"><div class="stat-icon" style="background:var(--gdim)"><i data-lucide="pen-line" style="width:22px;height:22px;color:var(--green)"></i></div><div><div class="stat-val">${nT||0}</div><div class="stat-label">Total redações</div></div></div>`;
 
   const { data: pending } = await sb.from('submissions').select('*,profiles(name)').eq('status','pending').order('created_at').limit(5);
   document.getElementById('teacher-pending').innerHTML = !pending?.length
@@ -1419,7 +1427,7 @@ async function loadCoursesMgmt() {
         <div class="course-desc">${esc(c.description||'Sem descrição')}</div>
         <div class="course-meta"><span>📦 ${mc} módulos</span><span>▶️ ${lc} aulas</span></div>
         <div class="flex gap-2 mt-3">
-          <button class="btn btn-v btn-sm" style="flex:1" onclick="openModulesMgmt('${c.id}')">✏️ Editar</button>
+          <button class="btn btn-v btn-sm" style="flex:1" onclick="openModulesMgmt('${c.id}')"><i data-lucide="pencil" style="width:14px;height:14px"></i> Editar</button>
           <button class="btn btn-ghost btn-sm btn-icon" onclick="editCourse('${c.id}')">⚙️</button>
           <button class="btn btn-danger btn-sm btn-icon" onclick="deleteCourse('${c.id}')">🗑</button>
         </div>
@@ -1452,12 +1460,14 @@ async function saveCourse() {
   if(S.editingCourseId) await sb.from('courses').update(payload).eq('id',S.editingCourseId);
   else await sb.from('courses').insert({...payload,created_by:S.user.id});
   closeModal('modal-course'); toast('Curso salvo!','success'); loadCoursesMgmt();
+  if(window.lucide) setTimeout(()=>lucide.createIcons(),50);
 }
 
 async function deleteCourse(id) {
   if(!confirm('Apagar este curso e todos os módulos/aulas?'))return;
   await sb.from('courses').delete().eq('id',id);
   toast('Curso apagado.'); loadCoursesMgmt();
+  if(window.lucide) setTimeout(()=>lucide.createIcons(),50);
 }
 
 // ── MODULES MGMT ─────────────────────────────────────
@@ -1468,6 +1478,7 @@ async function openModulesMgmt(courseId) {
   document.getElementById('modules-course-title').textContent=c.title;
   document.getElementById('btn-publish-label').textContent=c.published?'Despublicar':'Publicar';
   renderModulesMgmt(c);
+  if(window.lucide) setTimeout(()=>lucide.createIcons(),50);
 }
 
 function renderModulesMgmt(c) {
@@ -1599,12 +1610,14 @@ async function createStudent(){
   if(error){toast('Erro: '+error.message,'error');btn.disabled=false;btn.innerHTML='Cadastrar';return;}
   toast(`Aluno ${name} cadastrado! ✅`,'success');
   closeModal('modal-invite');btn.disabled=false;btn.innerHTML='Cadastrar';loadStudents();
+  if(window.lucide) setTimeout(()=>lucide.createIcons(),50);
 }
 
 async function deleteStudent(id){
   if(!confirm('Remover este aluno?'))return;
   await sb.from('profiles').delete().eq('id',id);
   toast('Aluno removido.');loadStudents();
+  if(window.lucide) setTimeout(()=>lucide.createIcons(),50);
 }
 
 // ── CORRECTIONS ───────────────────────────────────────
@@ -1634,6 +1647,7 @@ function filterCorrections(f,btn){
   document.querySelectorAll('#corrections-tabs .tab').forEach(t=>t.classList.remove('active'));
   btn.classList.add('active');
   loadCorrections();
+  if(window.lucide) setTimeout(()=>lucide.createIcons(),50);
 }
 
 async function openCorrection(id){
@@ -1734,7 +1748,7 @@ async function openCorrection(id){
           <textarea id="score-feedback" rows="7" style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:14px;background:var(--bg);color:var(--ink);outline:none;resize:vertical;transition:.2s;line-height:1.6" placeholder="Clique em ✨ Gerar com IA ou escreva manualmente...">${esc(s.feedback||'')}</textarea>
           <div id="ia-status" style="font-size:12px;color:var(--muted);margin-top:4px;display:none">⏳ Gerando feedback com IA...</div>
         </div>
-        <button class="btn btn-v w-full" onclick="saveCorrection('${id}')">💾 Salvar Correção</button>
+        <button class="btn btn-v w-full" onclick="saveCorrection('${id}')"><i data-lucide="save" style="width:16px;height:16px"></i> Salvar Correção</button>
       </div>
 
       <!-- COLUNA DIREITA: competências -->
@@ -1801,10 +1815,11 @@ async function saveCorrection(id){
   const btn = event?.target;
   if(btn){ btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Salvando...'; }
   const {error} = await sb.from('submissions').update({...scores,feedback,status:'corrected',corrected_at:new Date().toISOString()}).eq('id',id);
-  if(error){ toast('Erro ao salvar: '+error.message,'error'); if(btn){btn.disabled=false;btn.innerHTML='💾 Salvar Correção';} return; }
+  if(error){ toast('Erro ao salvar: '+error.message,'error'); if(btn){btn.disabled=false;btn.innerHTML='<i data-lucide="save" style="width:16px;height:16px"></i> Salvar Correção';} return; }
   toast('Correção salva! ✅','success');
   closeModal('modal-correct');
   loadCorrections();
+  if(window.lucide) setTimeout(()=>lucide.createIcons(),50);
   if(document.getElementById('view-teacher-dash').classList.contains('active'))loadTeacherDash();
 }
 
@@ -1919,7 +1934,7 @@ Instruções:
     toast('Erro de conexão com a IA: '+e.message, 'error');
   }
 
-  btn.disabled = false; btn.innerHTML = '✨ Gerar com IA';
+  btn.disabled = false; btn.innerHTML = '<i data-lucide="sparkles" style="width:14px;height:14px"></i> Gerar com IA';
   status.style.display = 'none';
 }
 </script>
