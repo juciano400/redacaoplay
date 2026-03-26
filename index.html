@@ -1397,7 +1397,10 @@ async function saveCorrection(id){
     c5:parseInt(document.getElementById('score-c5').value)||0,
   };
   const feedback=document.getElementById('score-feedback').value.trim();
-  await sb.from('submissions').update({...scores,feedback,status:'corrected',corrected_at:new Date().toISOString()}).eq('id',id);
+  const btn = event?.target;
+  if(btn){ btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Salvando...'; }
+  const {error} = await sb.from('submissions').update({...scores,feedback,status:'corrected',corrected_at:new Date().toISOString()}).eq('id',id);
+  if(error){ toast('Erro ao salvar: '+error.message,'error'); if(btn){btn.disabled=false;btn.innerHTML='💾 Salvar Correção';} return; }
   toast('Correção salva! ✅','success');
   closeModal('modal-correct');
   loadCorrections();
