@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Redação Play</title>
+<!-- v20260326122651 -->
 <link rel="icon" type="image/png" href="https://res.cloudinary.com/dxn2gs6le/image/upload/v1774499769/download_r5dnfs.png">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -799,28 +800,31 @@ async function boot(user) {
   const { data: p } = await sb.from('profiles').select('*').eq('id', user.id).single();
   if (!p) { toast('Perfil não encontrado. Contate o professor.', 'error'); await sb.auth.signOut(); showAuth(); return; }
   S.profile = p;
-  document.getElementById('global-loader').classList.add('hidden');
-  document.getElementById('auth-screen').classList.add('hidden');
-  document.getElementById('app').style.display = 'flex';
+
+  // 1. Montar UI imediatamente
   document.getElementById('hdr-name').textContent = p.name || '';
   document.getElementById('hdr-avatar').textContent = (p.name||'?').charAt(0).toUpperCase();
   buildNav();
-  setTimeout(async () => {
-    try {
-      if (p.role === 'teacher') { showView('teacher-dash'); await loadTeacherDash(); }
-      else {
-        showView('dashboard');
-        // debug visual
-        const body = document.getElementById('dash-stats');
-        if (body) body.innerHTML = '<div style="padding:20px;color:red;font-size:13px">Carregando...</div>';
-        await loadStudentDash();
-      }
-    } catch(e) {
-      const body = document.getElementById('dash-stats');
-      if (body) body.innerHTML = '<div style="padding:20px;color:red;font-size:13px">ERRO: ' + e.message + '</div>';
-      toast('Erro: ' + e.message, 'error');
-    }
-  }, 300);
+
+  // 2. Mostrar a view correta ANTES de esconder o loader
+  if (p.role === 'teacher') showView('teacher-dash');
+  else showView('dashboard');
+
+  // 3. Mostrar app e esconder loader/auth
+  document.getElementById('global-loader').classList.add('hidden');
+  document.getElementById('auth-screen').classList.add('hidden');
+  document.getElementById('app').style.display = 'flex';
+
+  if (window.lucide) lucide.createIcons();
+
+  // 4. Carregar dados (view já visível)
+  try {
+    if (p.role === 'teacher') await loadTeacherDash();
+    else await loadStudentDash();
+  } catch(e) {
+    console.error('Erro ao carregar dashboard:', e);
+    toast('Erro ao carregar. Recarregue a página.', 'error');
+  }
 }
 
 function showAuth() {
