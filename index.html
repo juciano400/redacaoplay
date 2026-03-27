@@ -796,34 +796,51 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function boot(user) {
-  S.user = user;
-  const { data: p } = await sb.from('profiles').select('*').eq('id', user.id).single();
-  if (!p) { toast('Perfil não encontrado. Contate o professor.', 'error'); await sb.auth.signOut(); showAuth(); return; }
-  S.profile = p;
+  const hideLoader = () => {
+    document.getElementById('global-loader').classList.add('hidden');
+    document.getElementById('auth-screen').classList.add('hidden');
+  };
 
-  // 1. Montar UI imediatamente
-  document.getElementById('hdr-name').textContent = p.name || '';
-  document.getElementById('hdr-avatar').textContent = (p.name||'?').charAt(0).toUpperCase();
-  buildNav();
-
-  // 2. Mostrar a view correta ANTES de esconder o loader
-  if (p.role === 'teacher') showView('teacher-dash');
-  else showView('dashboard');
-
-  // 3. Mostrar app e esconder loader/auth
-  document.getElementById('global-loader').classList.add('hidden');
-  document.getElementById('auth-screen').classList.add('hidden');
-  document.getElementById('app').style.display = 'flex';
-
-  if (window.lucide) lucide.createIcons();
-
-  // 4. Carregar dados (view já visível)
   try {
-    if (p.role === 'teacher') await loadTeacherDash();
+    S.user = user;
+    const { data: p, error: pErr } = await sb.from('profiles').select('*').eq('id', user.id).single();
+
+    if (pErr || !p) {
+      // Tenta inserir perfil se não existir
+      const { error: insErr } = await sb.from('profiles').insert({
+        id: user.id,
+        name: user.user_metadata?.name || user.email.split('@')[0],
+        email: user.email,
+        role: user.user_metadata?.role || 'student'
+      });
+      if (insErr) { hideLoader(); toast('Perfil não encontrado. Contate o professor.', 'error'); await sb.auth.signOut(); showAuth(); return; }
+      const { data: p2 } = await sb.from('profiles').select('*').eq('id', user.id).single();
+      if (!p2) { hideLoader(); showAuth(); return; }
+      S.profile = p2;
+    } else {
+      S.profile = p;
+    }
+
+    const role = S.profile.role;
+    document.getElementById('hdr-name').textContent = S.profile.name || '';
+    document.getElementById('hdr-avatar').textContent = (S.profile.name||'?').charAt(0).toUpperCase();
+    buildNav();
+
+    if (role === 'teacher') showView('teacher-dash');
+    else showView('dashboard');
+
+    document.getElementById('app').style.display = 'flex';
+    hideLoader();
+    if (window.lucide) lucide.createIcons();
+
+    if (role === 'teacher') await loadTeacherDash();
     else await loadStudentDash();
+
   } catch(e) {
-    console.error('Erro ao carregar dashboard:', e);
-    toast('Erro ao carregar. Recarregue a página.', 'error');
+    console.error('Boot error:', e);
+    document.getElementById('global-loader').classList.add('hidden');
+    document.getElementById('auth-screen').classList.remove('hidden');
+    toast('Erro ao iniciar. Tente novamente.', 'error');
   }
 }
 
